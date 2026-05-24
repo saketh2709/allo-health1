@@ -1,6 +1,6 @@
 // src/lib/idempotency.ts
 import { prisma } from "./prisma";
-import type { Prisma } from "@prisma/client";
+import type { InputJsonValue } from "@prisma/client/runtime/library";
 import { NextResponse } from "next/server";
 
 /**
@@ -37,7 +37,7 @@ export async function storeIdempotencyResponse(
 ): Promise<void> {
   if (!key) return;
 
-  const jsonResponse = JSON.parse(JSON.stringify(response)) as Prisma.InputJsonValue;
+  const jsonResponse = JSON.parse(JSON.stringify(response)) as InputJsonValue;
 
   await prisma.idempotencyKey
     .create({
