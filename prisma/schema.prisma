@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,27 +8,25 @@ datasource db {
 }
 
 model Product {
-  id          String       @id @default(cuid())
-  name        String
-  description String?
-  imageUrl    String?
-  price       Int          // in paise/cents
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  stockLevels  StockLevel[]
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  imageUrl     String?
+  price        Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   reservations Reservation[]
+  stockLevels  StockLevel[]
 }
 
 model Warehouse {
-  id        String   @id @default(cuid())
-  name      String
-  location  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  stockLevels  StockLevel[]
+  id           String        @id @default(cuid())
+  name         String
+  location     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   reservations Reservation[]
+  stockLevels  StockLevel[]
 }
 
 model StockLevel {
@@ -38,10 +34,9 @@ model StockLevel {
   productId   String
   warehouseId String
   totalUnits  Int       @default(0)
-  reserved    Int       @default(0) // currently held by pending reservations
-
-  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  reserved    Int       @default(0)
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
 
   @@unique([productId, warehouseId])
 }
@@ -55,15 +50,8 @@ model Reservation {
   expiresAt   DateTime
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
-
-  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
-}
-
-enum ReservationStatus {
-  PENDING
-  CONFIRMED
-  RELEASED
+  product     Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouse   Warehouse         @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
 }
 
 model IdempotencyKey {
@@ -75,4 +63,10 @@ model IdempotencyKey {
   createdAt  DateTime @default(now())
 
   @@index([key, endpoint])
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  RELEASED
 }

@@ -24,7 +24,13 @@ export async function POST(
   }
 
   if (reservation.status === "CONFIRMED") {
-    const body = { ...reservation, status: "CONFIRMED" as const };
+    const body = {
+      ...reservation,
+      status: "CONFIRMED" as const,
+      expiresAt: reservation.expiresAt.toISOString(),
+      createdAt: reservation.createdAt.toISOString(),
+      updatedAt: reservation.updatedAt.toISOString(),
+    };
     await storeIdempotencyResponse(idempotencyKey, endpoint, 200, body);
     return NextResponse.json(body, { status: 200 });
   }

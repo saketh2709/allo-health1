@@ -8,7 +8,7 @@ import { Button } from "@/app/components/Button";
 import { formatPrice } from "@/lib/utils";
 import type { Reservation, Product, Warehouse } from "@/types";
 
-type ReservationWithRelations = Reservation & {
+type ReservationWithRelations = Omit<Reservation, "product" | "warehouse"> & {
   product: (Product & { createdAt: string; updatedAt: string }) | null;
   warehouse: (Warehouse & { createdAt: string; updatedAt: string }) | null;
 };

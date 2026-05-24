@@ -1,5 +1,6 @@
 // src/lib/idempotency.ts
 import { prisma } from "./prisma";
+import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 /**
@@ -32,14 +33,15 @@ export async function storeIdempotencyResponse(
   key: string,
   endpoint: string,
   statusCode: number,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  response: any
+  response: unknown
 ): Promise<void> {
   if (!key) return;
 
+  const jsonResponse = JSON.parse(JSON.stringify(response)) as Prisma.InputJsonValue;
+
   await prisma.idempotencyKey
     .create({
-      data: { key, endpoint, statusCode, response },
+      data: { key, endpoint, statusCode, response: jsonResponse },
     })
     .catch(() => {
       // Race condition: another request already stored it — that's fine
