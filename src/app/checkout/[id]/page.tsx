@@ -1,6 +1,6 @@
 // src/app/checkout/[id]/page.tsx
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { CheckoutClient } from "./CheckoutClient";
 
 interface CheckoutPageProps {
@@ -10,7 +10,7 @@ interface CheckoutPageProps {
 export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const { id } = await params;
 
-  const reservation = await prisma.reservation.findUnique({
+  const reservation = await getPrisma().reservation.findUnique({
     where: { id },
     include: { product: true, warehouse: true },
   });

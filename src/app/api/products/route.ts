@@ -1,6 +1,6 @@
 // src/app/api/products/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { releaseExpiredReservations } from "@/lib/expiry";
 
 export async function GET() {
@@ -8,7 +8,7 @@ export async function GET() {
     // Lazy expiry: clean up before reading stock
     await releaseExpiredReservations();
 
-    const products = await prisma.product.findMany({
+    const products = await getPrisma().product.findMany({
       orderBy: { name: "asc" },
       include: {
         stockLevels: {

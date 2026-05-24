@@ -1,6 +1,6 @@
 // src/app/api/reservations/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { acquireLock, releaseLock } from "@/lib/redis";
 import { CreateReservationSchema, RESERVATION_WINDOW_MS } from "@/lib/schemas";
 import { checkIdempotency, storeIdempotencyResponse } from "@/lib/idempotency";
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
   try {
     // Re-read stock inside the lock
-    const stock = await prisma.stockLevel.findUnique({
+    const stock = await getPrisma().stockLevel.findUnique({
       where: { productId_warehouseId: { productId, warehouseId } },
     });
 
@@ -89,12 +89,12 @@ export async function POST(req: NextRequest) {
     // Atomically increment reserved + create reservation in one transaction
     const expiresAt = new Date(Date.now() + RESERVATION_WINDOW_MS);
 
-    const [, reservation] = await prisma.$transaction([
-      prisma.stockLevel.update({
+    const [, reservation] = await getPrisma().$transaction([
+      getPrisma().stockLevel.update({
         where: { productId_warehouseId: { productId, warehouseId } },
         data: { reserved: { increment: quantity } },
       }),
-      prisma.reservation.create({
+      getPrisma().reservation.create({
         data: { productId, warehouseId, quantity, expiresAt },
         include: { product: true, warehouse: true },
       }),

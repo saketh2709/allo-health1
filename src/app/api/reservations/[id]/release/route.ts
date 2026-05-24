@@ -1,6 +1,6 @@
 // src/app/api/reservations/[id]/release/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 
 export async function POST(
   _req: NextRequest,
@@ -8,7 +8,7 @@ export async function POST(
 ) {
   const { id } = await params;
 
-  const reservation = await prisma.reservation.findUnique({ where: { id } });
+  const reservation = await getPrisma().reservation.findUnique({ where: { id } });
 
   if (!reservation) {
     return NextResponse.json(
@@ -24,13 +24,13 @@ export async function POST(
     );
   }
 
-  const [updated] = await prisma.$transaction([
-    prisma.reservation.update({
+  const [updated] = await getPrisma().$transaction([
+    getPrisma().reservation.update({
       where: { id },
       data: { status: "RELEASED" },
       include: { product: true, warehouse: true },
     }),
-    prisma.stockLevel.update({
+    getPrisma().stockLevel.update({
       where: {
         productId_warehouseId: {
           productId: reservation.productId,

@@ -1,6 +1,6 @@
 // src/app/api/reservations/[id]/confirm/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { checkIdempotency, storeIdempotencyResponse } from "@/lib/idempotency";
 
 export async function POST(
@@ -17,7 +17,7 @@ export async function POST(
     if (cached) return cached;
   }
 
-  const reservation = await prisma.reservation.findUnique({ where: { id } });
+  const reservation = await getPrisma().reservation.findUnique({ where: { id } });
 
   if (!reservation) {
     return NextResponse.json({ error: "Reservation not found" }, { status: 404 });
@@ -43,8 +43,8 @@ export async function POST(
 
   // Check expiry
   if (new Date() > reservation.expiresAt) {
-    await prisma.$transaction([
-      prisma.stockLevel.update({
+    await getPrisma().$transaction([
+      getPrisma().stockLevel.update({
         where: {
           productId_warehouseId: {
             productId: reservation.productId,
@@ -53,7 +53,7 @@ export async function POST(
         },
         data: { reserved: { decrement: reservation.quantity } },
       }),
-      prisma.reservation.update({
+      getPrisma().reservation.update({
         where: { id },
         data: { status: "RELEASED" },
       }),
@@ -64,13 +64,13 @@ export async function POST(
     return NextResponse.json(body, { status: 410 });
   }
 
-  const [updated] = await prisma.$transaction([
-    prisma.reservation.update({
+  const [updated] = await getPrisma().$transaction([
+    getPrisma().reservation.update({
       where: { id },
       data: { status: "CONFIRMED" },
       include: { product: true, warehouse: true },
     }),
-    prisma.stockLevel.update({
+    getPrisma().stockLevel.update({
       where: {
         productId_warehouseId: {
           productId: reservation.productId,

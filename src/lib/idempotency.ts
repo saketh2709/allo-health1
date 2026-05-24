@@ -1,5 +1,5 @@
 // src/lib/idempotency.ts
-import { prisma } from "./prisma";
+import { getPrisma } from "./prisma";
 import type { InputJsonValue } from "@prisma/client/runtime/library";
 import { NextResponse } from "next/server";
 
@@ -13,7 +13,7 @@ export async function checkIdempotency(
 ): Promise<NextResponse | null> {
   if (!key) return null;
 
-  const existing = await prisma.idempotencyKey.findFirst({
+  const existing = await getPrisma().idempotencyKey.findFirst({
     where: { key, endpoint },
   });
 
@@ -39,8 +39,8 @@ export async function storeIdempotencyResponse(
 
   const jsonResponse = JSON.parse(JSON.stringify(response)) as InputJsonValue;
 
-  await prisma.idempotencyKey
-    .create({
+  await getPrisma()
+    .idempotencyKey.create({
       data: { key, endpoint, statusCode, response: jsonResponse },
     })
     .catch(() => {

@@ -1,10 +1,10 @@
 // src/app/api/warehouses/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const warehouses = await prisma.warehouse.findMany({
+    const warehouses = await getPrisma().warehouse.findMany({
       orderBy: { name: "asc" },
     });
     return NextResponse.json(warehouses);
