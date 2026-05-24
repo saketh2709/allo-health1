@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Allo Inventory — Take-Home Exercise
 
 A Next.js inventory and reservation platform for multi-warehouse retail. Customers can browse stock across warehouses, reserve items for a 10-minute window, then confirm or cancel their reservation.
@@ -191,3 +192,8 @@ prisma/
 ├── schema.prisma
 └── seed.ts
 ```
+=======
+# allo-health1
+>>>>>>> 80a0742b1edbf9486405061cfaade4b57c567e7c
+#   a l l o h e a l t h  
+ 
