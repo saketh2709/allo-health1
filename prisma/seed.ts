@@ -32,7 +32,7 @@ async function main() {
         description:
           "Premium noise-cancelling earbuds with 30hr battery life and Hi-Fi audio.",
         imageUrl:
-          "https://images.unsplash.com/photo-1590658165737-15a047b7aca4?w=400",
+          "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400",
         price: 299900,
       },
     }),
@@ -76,6 +76,16 @@ async function main() {
         price: 899900,
       },
     }),
+    prisma.product.create({
+      data: {
+        name: "Noise Cancelling Headphones",
+        description:
+          "Over-ear headphones with active noise cancellation, 40hr battery and foldable design.",
+        imageUrl:
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+        price: 349900,
+      },
+    }),
   ]);
 
   // Stock levels per product per warehouse
@@ -90,16 +100,20 @@ async function main() {
     { productId: products[1].id, warehouseId: bangalore.id, totalUnits: 5 },
     // Keyboard
     { productId: products[2].id, warehouseId: mumbai.id, totalUnits: 25 },
-    { productId: products[2].id, warehouseId: delhi.id, totalUnits: 2 }, // low stock
+    { productId: products[2].id, warehouseId: delhi.id, totalUnits: 2 },
     { productId: products[2].id, warehouseId: bangalore.id, totalUnits: 18 },
     // USB Hub
     { productId: products[3].id, warehouseId: mumbai.id, totalUnits: 100 },
     { productId: products[3].id, warehouseId: delhi.id, totalUnits: 80 },
     { productId: products[3].id, warehouseId: bangalore.id, totalUnits: 60 },
     // SSD
-    { productId: products[4].id, warehouseId: mumbai.id, totalUnits: 1 }, // very low!
+    { productId: products[4].id, warehouseId: mumbai.id, totalUnits: 1 },
     { productId: products[4].id, warehouseId: delhi.id, totalUnits: 8 },
     { productId: products[4].id, warehouseId: bangalore.id, totalUnits: 12 },
+    // Headphones
+    { productId: products[5].id, warehouseId: mumbai.id, totalUnits: 35 },
+    { productId: products[5].id, warehouseId: delhi.id, totalUnits: 20 },
+    { productId: products[5].id, warehouseId: bangalore.id, totalUnits: 15 },
   ];
 
   await prisma.stockLevel.createMany({ data: stockData });

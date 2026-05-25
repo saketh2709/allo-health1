@@ -5,11 +5,11 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
-  // Next.js 15: React 19 compatible
-  experimental: {},
 };
 
 module.exports = nextConfig;
